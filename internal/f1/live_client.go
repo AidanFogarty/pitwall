@@ -18,12 +18,18 @@ const (
 
 type FeedHandler func(topic string, data any, timestamp string) error
 
+type noopLogger struct{}
+
+func (n noopLogger) Log(keyVals ...any) error {
+	return nil
+}
+
 type F1Receiver struct {
 	signalr.Hub
 	handler FeedHandler
 }
 
-func (r *F1Receiver) Receive(topic string, data any, timestamp string) {
+func (r *F1Receiver) Feed(topic string, data any, timestamp string) {
 	if r.handler != nil {
 		r.handler(topic, data, timestamp)
 	}
@@ -78,7 +84,7 @@ func (c *F1LiveClient) Start(ctx context.Context) (*InitialLiveState, error) {
 		signalr.WithConnection(connection),
 		signalr.WithReceiver(receiver),
 		signalr.MaximumReceiveMessageSize(maxMessageSize),
-		signalr.Logger(nil, false),
+		signalr.Logger(noopLogger{}, false),
 	)
 
 	if err != nil {
