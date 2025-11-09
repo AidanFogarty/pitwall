@@ -45,3 +45,9 @@ homebrew_casks:
       owner: AidanFogarty
       name: homebrew-tap
       token: "{{ .Env.GITHUB_TOKEN }}"
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/pitwall"]
+          end
