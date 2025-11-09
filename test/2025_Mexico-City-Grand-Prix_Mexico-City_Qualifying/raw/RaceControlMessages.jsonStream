@@ -1,0 +1,14 @@
+00:13:36.469{"Messages":[{"Utc":"2025-10-25T21:00:00","Category":"Flag","Flag":"GREEN","Scope":"Track","Message":"GREEN LIGHT - PIT EXIT OPEN"}]}
+00:17:34.763{"Messages":{"1":{"Utc":"2025-10-25T21:03:58","Category":"Other","Message":"CAR 5 (BOR) TIME 1:18.964 DELETED - TRACK LIMITS AT TURN 12 LAP 3 15:03:34"}}}
+00:31:36.560{"Messages":{"2":{"Utc":"2025-10-25T21:18:00","Category":"Flag","Flag":"CHEQUERED","Scope":"Track","Message":"CHEQUERED FLAG"}}}
+00:31:45.512{"Messages":{"3":{"Utc":"2025-10-25T21:18:09","Category":"Other","Message":"FIRST CAR TO TAKE THE FLAG - CAR 63 (RUS)"}}}
+00:32:22.103{"Messages":{"4":{"Utc":"2025-10-25T21:18:46","Category":"Other","Message":"CAR 43 (COL) LAP DELETED - TRACK LIMITS AT TURN 3 LAP 9 15:16:30 (PIT)"}}}
+00:34:31.852{"Messages":{"5":{"Utc":"2025-10-25T21:20:56","Category":"Other","Message":"FIA STEWARDS: Q1 INCIDENT INVOLVING CARS 81 (PIA), 27 (HUL), 22 (TSU), 55 (SAI) AND 5 (BOR) NOTED - FAILING TO FOLLOW RACE DIRECTORS INSTRUCTIONS - MAXIMUM DELTA TIME"}}}
+00:34:38.789{"Messages":{"6":{"Utc":"2025-10-25T21:21:02","Category":"Other","Message":"FIA STEWARDS: Q1 INCIDENT INVOLVING CARS 81 (PIA), 27 (HUL), 22 (TSU), 55 (SAI) AND 5 (BOR) WILL BE INVESTIGATED AFTER THE SESSION - FAILING TO FOLLOW RACE DIRECTORS INSTRUCTIONS - MAXIMUM DELTA TIME"}}}
+00:38:36.481{"Messages":{"7":{"Utc":"2025-10-25T21:25:00","Category":"Flag","Flag":"GREEN","Scope":"Track","Message":"GREEN LIGHT - PIT EXIT OPEN"}}}
+00:53:36.568{"Messages":{"8":{"Utc":"2025-10-25T21:40:00","Category":"Flag","Flag":"CHEQUERED","Scope":"Track","Message":"CHEQUERED FLAG"}}}
+00:53:49.032{"Messages":{"9":{"Utc":"2025-10-25T21:40:13","Category":"Other","Message":"FIRST CAR TO TAKE THE FLAG - CAR 81 (PIA)"}}}
+01:01:36.510{"Messages":{"10":{"Utc":"2025-10-25T21:48:00","Category":"Flag","Flag":"GREEN","Scope":"Track","Message":"GREEN LIGHT - PIT EXIT OPEN"}}}
+01:13:36.570{"Messages":{"11":{"Utc":"2025-10-25T22:00:00","Category":"Flag","Flag":"CHEQUERED","Scope":"Track","Message":"CHEQUERED FLAG"}}}
+01:13:46.172{"Messages":{"12":{"Utc":"2025-10-25T22:00:10","Category":"Other","Message":"FIRST CAR TO TAKE THE FLAG - CAR 6 (HAD)"}}}
+01:16:24.927{"Messages":{"13":{"Utc":"2025-10-25T22:02:49","Category":"Other","Message":"FIA STEWARDS: Q1 INCIDENT INVOLVING CARS 81 (PIA), 27 (HUL), 22 (TSU), 55 (SAI) AND 5 (BOR) NO FURTHER ACTION - FAILING TO FOLLOW RACE DIRECTORS INSTRUCTIONS - MAXIMUM DELTA TIME"}}}

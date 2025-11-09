@@ -1,0 +1,29 @@
+{
+  "Meeting": {
+    "Key": 1272,
+    "Name": "Mexico City Grand Prix",
+    "OfficialName": "FORMULA 1 GRAN PREMIO DE LA CIUDAD DE MÉXICO 2025",
+    "Location": "Mexico City",
+    "Number": 20,
+    "Country": {
+      "Key": 8,
+      "Code": "MEX",
+      "Name": "Mexico"
+    },
+    "Circuit": {
+      "Key": 65,
+      "ShortName": "Mexico City"
+    }
+  },
+  "SessionStatus": "Inactive",
+  "ArchiveStatus": {
+    "Status": "Generating"
+  },
+  "Key": 9873,
+  "Type": "Qualifying",
+  "Name": "Qualifying",
+  "StartDate": "2025-10-25T15:00:00",
+  "EndDate": "2025-10-25T16:00:00",
+  "GmtOffset": "-06:00:00",
+  "Path": "2025/2025-10-26_Mexico_City_Grand_Prix/2025-10-25_Qualifying/"
+}
