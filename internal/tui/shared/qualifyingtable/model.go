@@ -211,18 +211,16 @@ func (m *Model) updateSectors(driver *DriverState, sectorsRaw json.RawMessage) {
 	}
 
 	for sectorKey, sectorRaw := range sectorsMap {
-		// Parse the full sector data including both Value and Segments
 		var sectorData f1.SectorData
 		if err := json.Unmarshal(sectorRaw, &sectorData); err != nil {
 			continue
 		}
 
-		// Extract the sector time value
 		switch sectorKey {
 		case "0":
 			if sectorData.Value != "" {
 				driver.S1 = sectorData.Value
-				driver.S2 = "" // Clear subsequent sectors
+				driver.S2 = ""
 				driver.S3 = ""
 			}
 		case "1":
@@ -235,7 +233,6 @@ func (m *Model) updateSectors(driver *DriverState, sectorsRaw json.RawMessage) {
 			}
 		}
 
-		// Extract the segment statuses (your existing logic)
 		if len(sectorData.Segments) == 0 {
 			continue
 		}
