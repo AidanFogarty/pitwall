@@ -5,7 +5,7 @@ import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const installMethods: Record<string, string> = {
-  brew: "brew install AidanFogarty/pitwall/pitwall",
+  brew: "brew install AidanFogarty/tap/pitwall",
   go: "go install github.com/AidanFogarty/pitwall@latest",
 };
 
