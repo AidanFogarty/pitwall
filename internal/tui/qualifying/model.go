@@ -1,13 +1,35 @@
 package qualifying
 
 import (
-	"github.com/AidanFogarty/pitwall/internal/tui/shared/activity"
 	"github.com/AidanFogarty/pitwall/internal/tui/shared/information"
 	"github.com/AidanFogarty/pitwall/internal/tui/shared/qualifyingtable"
 	"github.com/AidanFogarty/pitwall/internal/tui/shared/racecontrol"
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
+
+type keyMap struct {
+	Quit key.Binding
+}
+
+func (k keyMap) ShortHelp() []key.Binding {
+	return []key.Binding{k.Quit}
+}
+
+func (k keyMap) FullHelp() [][]key.Binding {
+	return [][]key.Binding{
+		{k.Quit},
+	}
+}
+
+var keys = keyMap{
+	Quit: key.NewBinding(
+		key.WithKeys("q", "esc", "ctrl+c"),
+		key.WithHelp("q", "quit"),
+	),
+}
 
 type QualifyingModel struct {
 	width, height int
@@ -15,9 +37,9 @@ type QualifyingModel struct {
 	qualifyingTable qualifyingtable.Model
 	racecontrol     racecontrol.Model
 	information     information.Model
-	activity        activity.Model
 
-	event int
+	keys keyMap
+	help help.Model
 }
 
 func NewModel() tea.Model {
@@ -25,7 +47,9 @@ func NewModel() tea.Model {
 		qualifyingTable: qualifyingtable.New(),
 		racecontrol:     racecontrol.New(),
 		information:     information.New(),
-		activity:        activity.New(),
+
+		keys: keys,
+		help: help.New(),
 	}
 	return model
 }
@@ -35,7 +59,6 @@ func (m QualifyingModel) Init() tea.Cmd {
 		m.qualifyingTable.Init(),
 		m.racecontrol.Init(),
 		m.information.Init(),
-		m.activity.Init(),
 	)
 }
 
@@ -57,8 +80,8 @@ func (m QualifyingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.racecontrol = m.racecontrol.SetSize(leftWidth, raceControlHeight)
 		m.information = m.information.SetSize(rightWidth, msg.Height)
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c", "q":
+		switch {
+		case key.Matches(msg, m.keys.Quit):
 			return m, tea.Quit
 		}
 	}
@@ -91,8 +114,12 @@ func (m QualifyingModel) View() string {
 		rightSide,
 	)
 
+	helpView := m.help.View(m.keys)
+	helpView = lipgloss.NewStyle().PaddingLeft(1).Render(helpView)
+
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		mainContent,
+		helpView,
 	)
 }
