@@ -1,6 +1,7 @@
 package dashboard
 
 import (
+	"github.com/AidanFogarty/pitwall/internal/tui/shared/debug"
 	"github.com/AidanFogarty/pitwall/internal/tui/shared/information"
 	"github.com/AidanFogarty/pitwall/internal/tui/shared/racecontrol"
 	"github.com/AidanFogarty/pitwall/internal/tui/shared/timingtable"
@@ -11,16 +12,18 @@ import (
 )
 
 type keyMap struct {
-	Quit key.Binding
+	Quit   key.Binding
+	Timing key.Binding
+	Debug  key.Binding
 }
 
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Quit}
+	return []key.Binding{k.Quit, k.Timing, k.Debug}
 }
 
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Quit},
+		{k.Quit, k.Timing, k.Debug},
 	}
 }
 
@@ -28,6 +31,14 @@ var keys = keyMap{
 	Quit: key.NewBinding(
 		key.WithKeys("q", "esc", "ctrl+c"),
 		key.WithHelp("q", "quit"),
+	),
+	Timing: key.NewBinding(
+		key.WithKeys("t"),
+		key.WithHelp("t", "timing"),
+	),
+	Debug: key.NewBinding(
+		key.WithKeys("d"),
+		key.WithHelp("d", "debug"),
 	),
 }
 
@@ -37,9 +48,12 @@ type DashboardModel struct {
 	timingTable timingtable.Model
 	racecontrol racecontrol.Model
 	information information.Model
+	debug       debug.Model
 
 	keys keyMap
 	help help.Model
+
+	currentView string
 }
 
 func NewModel() tea.Model {
@@ -50,6 +64,8 @@ func NewModel() tea.Model {
 
 		keys: keys,
 		help: help.New(),
+
+		currentView: "timing",
 	}
 	return model
 }
@@ -59,6 +75,7 @@ func (m DashboardModel) Init() tea.Cmd {
 		m.timingTable.Init(),
 		m.racecontrol.Init(),
 		m.information.Init(),
+		m.debug.Init(),
 	)
 }
 
@@ -81,6 +98,12 @@ func (m DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.information = m.information.SetSize(rightWidth, msg.Height)
 	case tea.KeyMsg:
 		switch {
+		case key.Matches(msg, m.keys.Timing):
+			m.currentView = "timing"
+			return m, nil
+		case key.Matches(msg, m.keys.Debug):
+			m.currentView = "debug"
+			return m, nil
 		case key.Matches(msg, m.keys.Quit):
 			return m, tea.Quit
 		}
@@ -96,10 +119,35 @@ func (m DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.information, cmd = m.information.Update(msg)
 	cmds = append(cmds, cmd)
 
+	m.debug, cmd = m.debug.Update(msg)
+	cmds = append(cmds, cmd)
+
 	return m, tea.Batch(cmds...)
 }
 
 func (m DashboardModel) View() string {
+	helpView := m.help.View(m.keys)
+	helpView = lipgloss.NewStyle().PaddingLeft(1).Render(helpView)
+
+	switch m.currentView {
+	case "timing":
+		return lipgloss.JoinVertical(
+			lipgloss.Left,
+			m.timingView(),
+			helpView,
+		)
+	case "debug":
+		return lipgloss.JoinVertical(
+			lipgloss.Left,
+			m.debug.View(),
+			helpView,
+		)
+	default:
+		return ""
+	}
+}
+
+func (m DashboardModel) timingView() string {
 	leftSide := lipgloss.JoinVertical(
 		lipgloss.Left,
 		m.timingTable.View(),
@@ -114,12 +162,8 @@ func (m DashboardModel) View() string {
 		rightSide,
 	)
 
-	helpView := m.help.View(m.keys)
-	helpView = lipgloss.NewStyle().PaddingLeft(1).Render(helpView)
-
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		mainContent,
-		helpView,
 	)
 }
