@@ -9,7 +9,14 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+const (
+	maxEvents    = 20
+	maxDataChars = 100
+)
+
 type Model struct {
+	width, height int
+
 	name        string
 	sessionType string
 	location    string
@@ -17,7 +24,8 @@ type Model struct {
 	meetingKey int
 	sessionKey int
 
-	event int
+	event  int
+	events []f1.F1Event
 }
 
 func New() Model {
@@ -68,9 +76,31 @@ func (m Model) View() string {
 
 	stats := lipgloss.JoinHorizontal(lipgloss.Left, sessionInfo, locationInfo)
 
+	var eventLines []string
+	for _, event := range m.events {
+		dataStr := string(event.Data)
+		if len(dataStr) > maxDataChars {
+			dataStr = dataStr[:maxDataChars] + "..."
+		}
+
+		eventLine := fmt.Sprintf("%s | %s | %s",
+			keyStyle.Render(event.Type),
+			event.Timestamp.Format("15:04:05.000"),
+			dataStr,
+		)
+		eventLines = append(eventLines, baseStyle.Render(eventLine))
+	}
+
+	eventContent := lipgloss.JoinVertical(lipgloss.Left, eventLines...)
+
+	eventLog := lipgloss.NewStyle().
+		Border(lipgloss.NormalBorder()).
+		Width(m.width - 4)
+
 	debugInfo := []string{
 		title,
 		stats,
+		eventLog.Render(eventContent),
 	}
 
 	return lipgloss.JoinVertical(
@@ -79,8 +109,19 @@ func (m Model) View() string {
 	)
 }
 
+func (m Model) SetSize(width, height int) Model {
+	m.width = width
+	m.height = height
+	return m
+}
+
 func (m *Model) handleEvent(event f1.F1Event) {
 	m.event++
+
+	m.events = append(m.events, event)
+	if len(m.events) > maxEvents {
+		m.events = m.events[len(m.events)-maxEvents:]
+	}
 
 	switch event.Type {
 	case "SessionInfo":

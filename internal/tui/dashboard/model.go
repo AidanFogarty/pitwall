@@ -96,6 +96,8 @@ func (m DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.timingTable = m.timingTable.SetSize(leftWidth, timingTableHeight)
 		m.racecontrol = m.racecontrol.SetSize(leftWidth, raceControlHeight)
 		m.information = m.information.SetSize(rightWidth, msg.Height)
+
+		m.debug = m.debug.SetSize(msg.Width, msg.Height)
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keys.Timing):
