@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/AidanFogarty/pitwall/internal/f1"
+	"github.com/AidanFogarty/pitwall/internal/tui/shared"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
@@ -464,6 +465,25 @@ func (m *Model) buildTableRows(drivers []*DriverState) [][]string {
 			driverStyle = baseStyle.Foreground(lipgloss.Color("#" + driver.TeamColour))
 		}
 
+		var tyreDisplay string
+		if driver.Tyre != "" {
+			tyreChar := string(driver.Tyre[0])
+			tyreStyle := baseStyle
+
+			switch tyreChar {
+			case "S":
+				tyreStyle = baseStyle.Foreground(shared.ColorTyreSoft)
+			case "M":
+				tyreStyle = baseStyle.Foreground(shared.ColorTyreMedium)
+			case "H":
+				tyreStyle = baseStyle.Foreground(shared.ColorTyreHard)
+			}
+
+			tyreDisplay = tyreStyle.Render(fmt.Sprintf("%s %d", tyreChar, driver.TyreAge))
+		} else {
+			tyreDisplay = baseStyle.Render("")
+		}
+
 		rows[i] = []string{
 			baseStyle.Render(fmt.Sprintf("%d", driver.Position)),
 			driverStyle.Render(fmt.Sprintf("%s %s", driver.RacingNumber, driver.Tla)),
@@ -473,7 +493,7 @@ func (m *Model) buildTableRows(drivers []*DriverState) [][]string {
 			baseStyle.Render(renderMiniSectors(driver.S2Segments)),
 			baseStyle.Render(renderMiniSectors(driver.S3Segments)),
 			baseStyle.Render(driver.PitStatus),
-			baseStyle.Render(fmt.Sprintf("%s %d", driver.Tyre, driver.TyreAge)),
+			baseStyle.Render(tyreDisplay),
 			baseStyle.Render(driver.S1),
 			baseStyle.Render(driver.S2),
 			baseStyle.Render(driver.S3),
