@@ -46,6 +46,10 @@ type DriverState struct {
 	S2 string
 	S3 string
 
+	S1PersonalFastest bool
+	S2PersonalFastest bool
+	S3PersonalFastest bool
+
 	PitStatus string
 
 	Tyre    string
@@ -56,6 +60,10 @@ type Model struct {
 	table *table.Table
 
 	drivers map[string]*DriverState
+
+	s1OverallFastestHolder string
+	s2OverallFastestHolder string
+	s3OverallFastestHolder string
 
 	width  int
 	height int
@@ -273,14 +281,32 @@ func (m *Model) updateSectors(driver *DriverState, sectors json.RawMessage) {
 
 		if len(sectorsArray) > 0 && sectorsArray[0].Value != "" {
 			driver.S1 = sectorsArray[0].Value
+
+			driver.S1PersonalFastest = sectorsArray[0].PersonalFastest
+			if sectorsArray[0].OverallFastest {
+				m.s1OverallFastestHolder = driver.RacingNumber
+			}
+
 			driver.S2 = ""
 			driver.S3 = ""
+			driver.S2PersonalFastest = false
+			driver.S3PersonalFastest = false
 		}
 		if len(sectorsArray) > 1 && sectorsArray[1].Value != "" {
 			driver.S2 = sectorsArray[1].Value
+
+			driver.S2PersonalFastest = sectorsArray[1].PersonalFastest
+			if sectorsArray[1].OverallFastest {
+				m.s2OverallFastestHolder = driver.RacingNumber
+			}
 		}
 		if len(sectorsArray) > 2 && sectorsArray[2].Value != "" {
 			driver.S3 = sectorsArray[2].Value
+
+			driver.S3PersonalFastest = sectorsArray[2].PersonalFastest
+			if sectorsArray[2].OverallFastest {
+				m.s3OverallFastestHolder = driver.RacingNumber
+			}
 		}
 
 	case '{':
@@ -291,14 +317,32 @@ func (m *Model) updateSectors(driver *DriverState, sectors json.RawMessage) {
 
 		if s1, exists := sectorsMap["0"]; exists && s1.Value != "" {
 			driver.S1 = s1.Value
+
+			driver.S1PersonalFastest = s1.PersonalFastest
+			if s1.OverallFastest {
+				m.s1OverallFastestHolder = driver.RacingNumber
+			}
+
 			driver.S2 = ""
 			driver.S3 = ""
+			driver.S2PersonalFastest = false
+			driver.S3PersonalFastest = false
 		}
 		if s2, exists := sectorsMap["1"]; exists && s2.Value != "" {
 			driver.S2 = s2.Value
+
+			driver.S2PersonalFastest = s2.PersonalFastest
+			if s2.OverallFastest {
+				m.s2OverallFastestHolder = driver.RacingNumber
+			}
 		}
 		if s3, exists := sectorsMap["2"]; exists && s3.Value != "" {
 			driver.S3 = s3.Value
+
+			driver.S3PersonalFastest = s3.PersonalFastest
+			if s3.OverallFastest {
+				m.s3OverallFastestHolder = driver.RacingNumber
+			}
 		}
 	}
 }
@@ -410,6 +454,9 @@ func (m *Model) buildSortedDriverList() []*DriverState {
 func (m *Model) buildTableRows(drivers []*DriverState) [][]string {
 	baseStyle := lipgloss.NewStyle().Padding(0, 1)
 
+	personalBestStyle := baseStyle.Foreground(shared.ColorSectorPersonalFastest)
+	overallBestStyle := baseStyle.Foreground(shared.ColorSectorOverallFastest)
+
 	if len(drivers) == 0 {
 		rows := make([][]string, f1.NumberOfDrivers)
 		emptyRow := []string{"", "", "", "", "", "", "", "", "", "", ""}
@@ -446,6 +493,27 @@ func (m *Model) buildTableRows(drivers []*DriverState) [][]string {
 			tyreDisplay = baseStyle.Render("")
 		}
 
+		s1Style := baseStyle
+		if driver.RacingNumber == m.s1OverallFastestHolder {
+			s1Style = overallBestStyle
+		} else if driver.S1PersonalFastest {
+			s1Style = personalBestStyle
+		}
+
+		s2Style := baseStyle
+		if driver.RacingNumber == m.s2OverallFastestHolder {
+			s2Style = overallBestStyle
+		} else if driver.S2PersonalFastest {
+			s2Style = personalBestStyle
+		}
+
+		s3Style := baseStyle
+		if driver.RacingNumber == m.s3OverallFastestHolder {
+			s3Style = overallBestStyle
+		} else if driver.S3PersonalFastest {
+			s3Style = personalBestStyle
+		}
+
 		rows[i] = []string{
 			baseStyle.Render(fmt.Sprintf("%d", driver.Position)),
 			driverStyle.Render(fmt.Sprintf("%s %s", driver.RacingNumber, driver.Tla)),
@@ -453,9 +521,9 @@ func (m *Model) buildTableRows(drivers []*DriverState) [][]string {
 			baseStyle.Render(driver.Leader),
 			baseStyle.Render(driver.BestLap),
 			baseStyle.Render(driver.LastLap),
-			baseStyle.Render(driver.S1),
-			baseStyle.Render(driver.S2),
-			baseStyle.Render(driver.S3),
+			s1Style.Render(driver.S1),
+			s2Style.Render(driver.S2),
+			s3Style.Render(driver.S3),
 			baseStyle.Render(driver.PitStatus),
 			baseStyle.Render(tyreDisplay),
 		}
