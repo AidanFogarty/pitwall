@@ -50,6 +50,8 @@ type DriverState struct {
 	S2PersonalFastest bool
 	S3PersonalFastest bool
 
+	PersonalFastest bool
+
 	PitStatus string
 
 	Tyre    string
@@ -64,6 +66,8 @@ type Model struct {
 	s1OverallFastestHolder string
 	s2OverallFastestHolder string
 	s3OverallFastestHolder string
+
+	overallFastestHolder string
 
 	width  int
 	height int
@@ -247,6 +251,12 @@ func (m *Model) handleTimingData(event f1.F1Event) error {
 		}
 		if data.LastLapTime.Value != "" {
 			driver.LastLap = data.LastLapTime.Value
+		}
+		if data.LastLapTime.OverallFastest {
+			m.overallFastestHolder = driver.RacingNumber
+		}
+		if data.LastLapTime.PersonalFastest {
+			driver.PersonalFastest = data.LastLapTime.PersonalFastest
 		}
 
 		if data.InPit {
@@ -514,13 +524,23 @@ func (m *Model) buildTableRows(drivers []*DriverState) [][]string {
 			s3Style = personalBestStyle
 		}
 
+		overallFastestStyle := baseStyle
+		if driver.RacingNumber == m.overallFastestHolder {
+			overallFastestStyle = overallBestStyle
+		}
+
+		personalFastestStyle := baseStyle
+		if driver.PersonalFastest {
+			personalFastestStyle = personalBestStyle
+		}
+
 		rows[i] = []string{
 			baseStyle.Render(fmt.Sprintf("%d", driver.Position)),
 			driverStyle.Render(fmt.Sprintf("%s %s", driver.RacingNumber, driver.Tla)),
 			baseStyle.Render(driver.Gap),
 			baseStyle.Render(driver.Leader),
-			baseStyle.Render(driver.BestLap),
-			baseStyle.Render(driver.LastLap),
+			overallFastestStyle.Render(driver.BestLap),
+			personalFastestStyle.Render(driver.LastLap),
 			s1Style.Render(driver.S1),
 			s2Style.Render(driver.S2),
 			s3Style.Render(driver.S3),
