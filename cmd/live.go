@@ -38,7 +38,7 @@ func runLive(cmd *cobra.Command, args []string) error {
 	case "Race":
 		model = dashboard.NewModel()
 		program = tea.NewProgram(model, tea.WithAltScreen())
-	case "Qualifying":
+	case "Qualifying", "Practice":
 		model = qualifying.NewModel()
 		program = tea.NewProgram(model, tea.WithAltScreen())
 	default:
