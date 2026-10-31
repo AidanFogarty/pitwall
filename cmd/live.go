@@ -5,11 +5,14 @@ import (
 	"fmt"
 
 	"github.com/AidanFogarty/pitwall/internal/f1"
+	"github.com/AidanFogarty/pitwall/internal/logging"
 	"github.com/AidanFogarty/pitwall/internal/tui/dashboard"
 	"github.com/AidanFogarty/pitwall/internal/tui/qualifying"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 )
+
+var liveLogFile string
 
 var liveCmd = &cobra.Command{
 	Use:   "live",
@@ -23,6 +26,11 @@ func runLive(cmd *cobra.Command, args []string) error {
 	var program *tea.Program
 
 	client := f1.NewF1LiveClient(f1.AllTopics)
+	if liveLogFile != "" {
+		if err := client.SetLogFile(liveLogFile); err != nil {
+			return fmt.Errorf("failed to open log file: %w", err)
+		}
+	}
 
 	initialState, err := client.Start(cmd.Context())
 	if err != nil {
@@ -59,6 +67,10 @@ func runLive(cmd *cobra.Command, args []string) error {
 		return nil
 	})
 
+	go client.Watch(cmd.Context(), func(state *f1.InitialLiveState) {
+		populateInitialState(program, state)
+	})
+
 	// TODO: I am marshalling and unmarshalling data everywhere, I need to fix this later
 	go populateInitialState(program, initialState)
 	_, err = program.Run()
@@ -67,6 +79,7 @@ func runLive(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
+	liveCmd.Flags().StringVar(&liveLogFile, "log-file", logging.DefaultPath("live.log"), "connection diagnostics log file (empty to disable)")
 	rootCmd.AddCommand(liveCmd)
 }
 
