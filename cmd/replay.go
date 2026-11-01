@@ -46,7 +46,7 @@ func runReplay(cmd *cobra.Command, args []string) error {
 		case "Race":
 			model = dashboard.NewModel()
 			program = tea.NewProgram(model, tea.WithAltScreen())
-		case "Qualifying":
+		case "Qualifying", "Practice":
 			model = qualifying.NewModel()
 			program = tea.NewProgram(model, tea.WithAltScreen())
 		default:
@@ -86,7 +86,16 @@ func getImportedSessions() ([]string, error) {
 
 	items := []string{}
 	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+
 		dirName := entry.Name()
+		sessionInfoPath := filepath.Join(dataDir, dirName, "session_info.json")
+		if _, err := os.Stat(sessionInfoPath); err != nil {
+			continue
+		}
+
 		items = append(items, dirName)
 	}
 
