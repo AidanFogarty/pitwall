@@ -156,7 +156,7 @@ func (m QualifyingModel) qualifyingView() string {
 		m.racecontrol.View(),
 	)
 
-	rightSide := m.information.View()
+	rightSide := m.information.SetHeight(lipgloss.Height(leftSide)).View()
 
 	mainContent := lipgloss.JoinHorizontal(
 		lipgloss.Top,

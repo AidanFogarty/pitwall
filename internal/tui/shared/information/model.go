@@ -142,11 +142,17 @@ func (m Model) View() string {
 	box := lipgloss.NewStyle().
 		Border(lipgloss.NormalBorder()).
 		Width(m.width - 2).
-		Height(30).
+		Height(m.height - 2).
+		MaxHeight(m.height).
 		PaddingLeft(1).
 		Render(content)
 
 	return box
+}
+
+func (m Model) SetHeight(height int) Model {
+	m.height = height
+	return m
 }
 
 func (m Model) SetSize(width, height int) Model {
