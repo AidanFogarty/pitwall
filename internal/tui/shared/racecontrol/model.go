@@ -3,6 +3,8 @@ package racecontrol
 import (
 	"bytes"
 	"encoding/json"
+	"sort"
+	"strconv"
 
 	"github.com/AidanFogarty/pitwall/internal/f1"
 	tea "github.com/charmbracelet/bubbletea"
@@ -12,12 +14,20 @@ import (
 type Model struct {
 	width, height int
 
-	messages []string
+	messages []f1.RaceControlMessage
+
+	teamColours map[string]string
+
+	cursor  int
+	top     int
+	tailing bool
 }
 
 func New() Model {
 	return Model{
-		messages: []string{},
+		messages:    []f1.RaceControlMessage{},
+		teamColours: map[string]string{},
+		tailing:     true,
 	}
 }
 
@@ -42,7 +52,7 @@ func (m Model) View() string {
 
 	var lines []string
 	for _, msg := range displayMessages {
-		lines = append(lines, msg)
+		lines = append(lines, msg.Message)
 	}
 
 	for len(lines) < 7 {
@@ -87,7 +97,23 @@ func (m *Model) handleEvent(event f1.F1Event) {
 	switch event.Type {
 	case "RaceControlMessages":
 		m.handleRaceControlMessages(event)
+	case "DriverList":
+		m.handleDriverList(event)
 	}
+}
+
+func (m *Model) handleDriverList(event f1.F1Event) error {
+	var driverList f1.DriverList
+	if err := json.Unmarshal(event.Data, &driverList); err != nil {
+		return err
+	}
+
+	for racingNumber, driver := range driverList {
+		if driver.TeamColour != "" {
+			m.teamColours[racingNumber] = driver.TeamColour
+		}
+	}
+	return nil
 }
 
 func (m *Model) handleRaceControlMessages(event f1.F1Event) error {
@@ -110,7 +136,7 @@ func (m *Model) handleRaceControlMessages(event f1.F1Event) error {
 
 		for _, msg := range messagesArray {
 			if msg.Message != "" {
-				m.messages = append(m.messages, msg.Message)
+				m.messages = append(m.messages, msg)
 			}
 		}
 	case '{':
@@ -119,9 +145,22 @@ func (m *Model) handleRaceControlMessages(event f1.F1Event) error {
 			return err
 		}
 
-		for _, msg := range messagesMap {
-			if msg.Message != "" {
-				m.messages = append(m.messages, msg.Message)
+		keys := make([]string, 0, len(messagesMap))
+		for k := range messagesMap {
+			keys = append(keys, k)
+		}
+		sort.Slice(keys, func(i, j int) bool {
+			a, errA := strconv.Atoi(keys[i])
+			b, errB := strconv.Atoi(keys[j])
+			if errA != nil || errB != nil {
+				return keys[i] < keys[j]
+			}
+			return a < b
+		})
+
+		for _, k := range keys {
+			if msg := messagesMap[k]; msg.Message != "" {
+				m.messages = append(m.messages, msg)
 			}
 		}
 	}
