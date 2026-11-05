@@ -5,18 +5,35 @@ Pitwall is a open source F1 live timing TUI built in Go.
 ![pitwall timing tower image](./website/public/images/timing-tower-dark-mode.png)
 
 ## Features
-- **Timing Tower** - Real-time race positions, sector times, gap analysis, and tyre strategy tracking
-- **Race Control** - Live feed of official race control messages and track status updates
+- **Timing Tower** - Real-time race positions, gap analysis, sector times, and tyre strategy tracking
+- **Qualifying & Practice Mode** - Live sector and mini sector progress for every driver
+- **Colour-Coded Timing** - Purple for fastest overall, green for personal best, plus tyre compound colours
+- **Race Control** - Full-screen, scrollable feed of official race control messages with flag and penalty colours (press `r`)
 - **Session Intelligence** - Comprehensive session data including weather conditions and track information
+- **Session Replay** - Import and replay past sessions
+- **Reliable Live Connection** - Automatically reconnects if the connection drops, with a diagnostics log at `~/.pitwall/live.log`
 
 ## Coming Soon
-- **Qualifying Mode** - Live sector and mini sector times with real-time tracking of qualifying sessions
-- **Sector Time Visualization** - Color-coded sector times displaying purple for fastest overall and green for personal best
 - **Driver Tracker & Telemetry** - Live circuit map with driver positions and comprehensive car telemetry data
+- **Live Championship Standings** - Real-time driver standings, team standings, and points distribution
 
 ## Getting Started
 
-Pitwall works with live and replayed data. To import an existing session, you run the following command to list available sessions:
+Pitwall works with live and replayed data.
+
+### Live
+
+Follow the current session (race, qualifying or practice):
+
+```bash
+pitwall live
+```
+
+Connection diagnostics are written to `~/.pitwall/live.log`. Use `--log-file` to change the path, or pass an empty value to disable it.
+
+### Replay
+
+To import an existing session, you run the following command to list available sessions:
 
 ```bash
 pitwall import --year 2025
@@ -52,7 +69,7 @@ You can then import an existing session, for example, the `Singapore Grand Prix 
 pitwall import --year 2025 --meeting 1270 --session 9896
 ```
 
-## Replay a session
+### Replaying an imported session
 
 After importing a session, you can replay a session with
 ```bash
@@ -62,3 +79,14 @@ pitwall replay
 You will be prompted to select a session:
 
 ![pitwall select session](./static/images/select-session.png)
+
+## Keyboard shortcuts
+
+| Key | Action |
+| --- | --- |
+| `t` | Timing screen |
+| `r` | Race control screen |
+| `d` | Debug view |
+| `↑`/`k`, `↓`/`j` | Scroll race control |
+| `g`, `G` | Jump to oldest / newest race control message |
+| `q` | Quit |
