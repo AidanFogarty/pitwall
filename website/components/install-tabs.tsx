@@ -1,7 +1,7 @@
 "use client";
 
+import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const installMethods: Record<string, string> = {
