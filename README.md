@@ -90,3 +90,18 @@ You will be prompted to select a session:
 | `↑`/`k`, `↓`/`j` | Scroll race control |
 | `g`, `G` | Jump to oldest / newest race control message |
 | `q` | Quit |
+
+## Tech Stack
+
+**TUI application**
+- [Go](https://go.dev/) - core language
+- [Bubble Tea](https://github.com/charmbracelet/bubbletea) - TUI framework (Elm-style model/update/view)
+- [Bubbles](https://github.com/charmbracelet/bubbles) - `list` (session picker), `help` and `key` (keybindings)
+- [Lip Gloss](https://github.com/charmbracelet/lipgloss) - styling and layout, including `lipgloss/table` for the timing tower
+- [Cobra](https://github.com/spf13/cobra) - CLI commands (`live`, `import`, `replay`)
+- [Viper](https://github.com/spf13/viper) - configuration
+
+**Website**
+- [Next.js](https://nextjs.org/) with [React](https://react.dev/) and [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/) - styling
+- [Biome](https://biomejs.dev/) - linting and formatting
