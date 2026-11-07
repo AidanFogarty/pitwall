@@ -5,15 +5,17 @@ Pitwall is a open source F1 live timing TUI built in Go.
 ![pitwall timing tower image](./website/public/images/timing-tower-dark-mode.png)
 
 ## Features
+
 - **Timing Tower** - Real-time race positions, gap analysis, sector times, and tyre strategy tracking
 - **Qualifying & Practice Mode** - Live sector and mini sector progress for every driver
 - **Colour-Coded Timing** - Purple for fastest overall, green for personal best, plus tyre compound colours
 - **Race Control** - Full-screen, scrollable feed of official race control messages with flag and penalty colours (press `r`)
 - **Session Intelligence** - Comprehensive session data including weather conditions and track information
-- **Session Replay** - Import and replay past sessions
+- **Session Replay** - Import and replay past sessions (requires an F1 account, see [Login](#login))
 - **Reliable Live Connection** - Automatically reconnects if the connection drops, with a diagnostics log at `~/.pitwall/live.log`
 
 ## Coming Soon
+
 - **Driver Tracker & Telemetry** - Live circuit map with driver positions and comprehensive car telemetry data
 - **Live Championship Standings** - Real-time driver standings, team standings, and points distribution
 
@@ -31,15 +33,28 @@ pitwall live
 
 Connection diagnostics are written to `~/.pitwall/live.log`. Use `--log-file` to change the path, or pass an empty value to disable it.
 
+### Login
+
+Importing sessions for replay requires an F1 account. Live timing does not need one.
+
+```bash
+pitwall login
+```
+
+Pitwall opens a Chrome, Edge, Brave or Chromium window on the official Formula 1 sign in page. Once you have signed in the window closes and the session is saved. The session token is stored in `~/.pitwall/auth.json`, readable only by you.
+
+The login lasts a few days. When it expires, `pitwall import` tells you to run `pitwall login` again. You can see the current login status and expiry time in the debug view (press `d`).
+
 ### Replay
 
-To import an existing session, you run the following command to list available sessions:
+To import an existing session, you run the following command to list available sessions (requires [login](#login)):
 
 ```bash
 pitwall import --year 2025
 ```
 
 Example Output:
+
 ```bash
 Key   Name                       Location           P1     P2     P3     SQ     Sprint  Qual   Race
 1253  Pre-Season Testing         Sakhir             9683   9684   9685   -      -       -      -
@@ -72,6 +87,7 @@ pitwall import --year 2025 --meeting 1270 --session 9896
 ### Replaying an imported session
 
 After importing a session, you can replay a session with
+
 ```bash
 pitwall replay
 ```
@@ -82,26 +98,28 @@ You will be prompted to select a session:
 
 ## Keyboard shortcuts
 
-| Key | Action |
-| --- | --- |
-| `t` | Timing screen |
-| `r` | Race control screen |
-| `d` | Debug view |
-| `↑`/`k`, `↓`/`j` | Scroll race control |
-| `g`, `G` | Jump to oldest / newest race control message |
-| `q` | Quit |
+| Key              | Action                                       |
+| ---------------- | -------------------------------------------- |
+| `t`              | Timing screen                                |
+| `r`              | Race control screen                          |
+| `d`              | Debug view                                   |
+| `↑`/`k`, `↓`/`j` | Scroll race control                          |
+| `g`, `G`         | Jump to oldest / newest race control message |
+| `q`              | Quit                                         |
 
 ## Tech Stack
 
 **TUI application**
+
 - [Go](https://go.dev/) - core language
 - [Bubble Tea](https://github.com/charmbracelet/bubbletea) - TUI framework (Elm-style model/update/view)
 - [Bubbles](https://github.com/charmbracelet/bubbles) - `list` (session picker), `help` and `key` (keybindings)
 - [Lip Gloss](https://github.com/charmbracelet/lipgloss) - styling and layout, including `lipgloss/table` for the timing tower
-- [Cobra](https://github.com/spf13/cobra) - CLI commands (`live`, `import`, `replay`)
+- [Cobra](https://github.com/spf13/cobra) - CLI commands (`live`, `login`, `import`, `replay`)
 - [Viper](https://github.com/spf13/viper) - configuration
 
 **Website**
+
 - [Next.js](https://nextjs.org/) with [React](https://react.dev/) and [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/) - styling
 - [Biome](https://biomejs.dev/) - linting and formatting
