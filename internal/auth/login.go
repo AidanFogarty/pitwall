@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/chromedp/cdproto/storage"
@@ -101,7 +100,7 @@ func findSession(ctx context.Context) (*Session, bool, error) {
 	}
 
 	for _, cookie := range result.Cookies {
-		if cookie.Name != sessionCookieName || !isFormula1Domain(cookie.Domain) {
+		if cookie.Name != sessionCookieName {
 			continue
 		}
 
@@ -113,9 +112,4 @@ func findSession(ctx context.Context) (*Session, bool, error) {
 	}
 
 	return nil, false, nil
-}
-
-func isFormula1Domain(domain string) bool {
-	domain = strings.TrimPrefix(domain, ".")
-	return domain == "formula1.com" || strings.HasSuffix(domain, ".formula1.com")
 }

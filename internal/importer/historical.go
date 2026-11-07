@@ -23,6 +23,7 @@ type Config struct {
 	BaseURL    string
 	HTTPClient *http.Client
 	DataDir    string
+	Token      string
 }
 
 func DefaultConfig() *Config {
@@ -80,10 +81,20 @@ func NewImporter(config *Config, dataDir string) *Importer {
 	return &Importer{config: config, dataDir: dataDir}
 }
 
+func (imp *Importer) newRequest(ctx context.Context, url string) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+imp.config.Token)
+	return req, nil
+}
+
 func (imp *Importer) GetAvailableMeetings(ctx context.Context, year int) (*IndexResponse, error) {
 	url := fmt.Sprintf("%s/%d/Index.json", imp.config.BaseURL, year)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	req, err := imp.newRequest(ctx, url)
 	if err != nil {
 		return nil, fmt.Errorf("creating index request: %w", err)
 	}
@@ -164,7 +175,7 @@ func (imp *Importer) ImportSession(ctx context.Context, year int, meetingKey int
 func (imp *Importer) fetchIndex(ctx context.Context, year int) (*IndexResponse, error) {
 	url := fmt.Sprintf("%s/%d/Index.json", imp.config.BaseURL, year)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	req, err := imp.newRequest(ctx, url)
 	if err != nil {
 		return nil, fmt.Errorf("creating index request: %w", err)
 	}
@@ -240,7 +251,7 @@ func (imp *Importer) downloadStreams(ctx context.Context, session *Session, outp
 }
 
 func (imp *Importer) downloadStream(ctx context.Context, url, filePath string) error {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	req, err := imp.newRequest(ctx, url)
 	if err != nil {
 		return fmt.Errorf("creating request for %s: %w", url, err)
 	}

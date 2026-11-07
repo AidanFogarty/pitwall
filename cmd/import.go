@@ -13,12 +13,19 @@ import (
 
 var importCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import historical f1 session data",
-	Long:  "Import historical f1 session data to replay races, qualifying and more",
+	Short: "Import historical f1 session data (requires login)",
+	Long:  "Import historical f1 session data to replay races, qualifying and more. Requires an f1 account, run `pitwall login` first.",
 	RunE:  runImport,
 }
 
 func runImport(cmd *cobra.Command, args []string) error {
+	cmd.SilenceUsage = true
+
+	loginSession, err := loadLoginSession()
+	if err != nil {
+		return err
+	}
+
 	year, err := cmd.Flags().GetInt("year")
 	if err != nil {
 		return err
@@ -35,6 +42,7 @@ func runImport(cmd *cobra.Command, args []string) error {
 	}
 
 	config := importer.DefaultConfig()
+	config.Token = loginSession.Token
 	imp := importer.NewImporter(config, dataDir)
 
 	if meeting == 0 || session == 0 {

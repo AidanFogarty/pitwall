@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"strings"
+	"time"
 
 	"github.com/AidanFogarty/pitwall/internal/auth"
 	"github.com/spf13/cobra"
@@ -67,6 +68,27 @@ func runLogin(cmd *cobra.Command, args []string) error {
 
 	printLoggedIn(out, session)
 	return nil
+}
+
+func loadLoginSession() (*auth.Session, error) {
+	store, err := auth.DefaultStore()
+	if err != nil {
+		return nil, err
+	}
+
+	session, err := store.Load()
+	if errors.Is(err, auth.ErrNotLoggedIn) || errors.Is(err, auth.ErrInvalidSession) {
+		return nil, errors.New("you are not logged in, run `pitwall login` to sign in")
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	if session.IsExpired(time.Now()) {
+		return nil, fmt.Errorf("your login expired on %s, run `pitwall login` to sign in again", session.ExpiresAt.Format("2006-01-02"))
+	}
+
+	return session, nil
 }
 
 func printLoggedIn(out io.Writer, session *auth.Session) {
