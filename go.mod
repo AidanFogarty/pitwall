@@ -1,12 +1,14 @@
 module github.com/AidanFogarty/pitwall
 
-go 1.24.6
+go 1.25
 
 require (
 	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/lipgloss v1.1.0
+	github.com/chromedp/cdproto v0.159.0
+	github.com/chromedp/chromedp v0.23.0
 	github.com/philippseith/signalr v0.8.0
 	github.com/spf13/cobra v1.10.1
 	github.com/spf13/viper v1.21.0
@@ -23,6 +25,7 @@ require (
 	github.com/coder/websocket v1.8.13 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
+	github.com/go-json-experiment/json v0.0.0-20260213210345-44df1a37e875 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
