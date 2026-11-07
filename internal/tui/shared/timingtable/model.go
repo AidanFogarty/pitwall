@@ -496,6 +496,10 @@ func (m *Model) buildTableRows(drivers []*DriverState) [][]string {
 				tyreStyle = baseStyle.Foreground(shared.ColorTyreMedium)
 			case "H":
 				tyreStyle = baseStyle.Foreground(shared.ColorTyreHard)
+			case "I":
+				tyreStyle = baseStyle.Foreground(shared.ColorTyreInter)
+			case "W":
+				tyreStyle = baseStyle.Foreground(shared.ColorTyreWet)
 			}
 
 			tyreDisplay = tyreStyle.Render(fmt.Sprintf("%s %d", tyreChar, driver.TyreAge))

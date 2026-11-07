@@ -8,6 +8,8 @@ const (
 	ColorTyreSoft   = lipgloss.Color("#ff6467")
 	ColorTyreMedium = lipgloss.Color("#ffd230")
 	ColorTyreHard   = lipgloss.Color("#99a1af")
+	ColorTyreInter  = lipgloss.Color("#05df72")
+	ColorTyreWet    = lipgloss.Color("#51a2ff")
 
 	ColorSectorPersonalFastest = lipgloss.Color("#00ff00")
 	ColorSectorOverallFastest  = lipgloss.Color("#9b59b6")
