@@ -24,6 +24,9 @@ type Model struct {
 	meetingKey int
 	sessionKey int
 
+	connection string
+	login      string
+
 	event  int
 	events []f1.F1Event
 }
@@ -38,6 +41,10 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case f1.ConnectionMsg:
+		m.connection = string(msg)
+	case f1.LoginMsg:
+		m.login = string(msg)
 	case f1.F1EventMsg:
 		event := f1.F1Event(msg)
 		m.handleEvent(event)
@@ -66,6 +73,8 @@ func (m Model) View() string {
 		baseStyle.Render(fmt.Sprintf("%s %d", keyStyle.Render("Events:"), m.event)),
 		baseStyle.Render(fmt.Sprintf("%s %d", keyStyle.Render("Meeting Key:"), m.meetingKey)),
 		baseStyle.Render(fmt.Sprintf("%s %d", keyStyle.Render("Session Key:"), m.sessionKey)),
+		baseStyle.Render(fmt.Sprintf("%s %s", keyStyle.Render("Connection:"), m.connection)),
+		baseStyle.Render(fmt.Sprintf("%s %s", keyStyle.Render("Login:"), m.login)),
 	)
 
 	locationInfo := lipgloss.JoinVertical(lipgloss.Left,

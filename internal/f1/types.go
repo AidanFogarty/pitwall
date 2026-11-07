@@ -14,6 +14,10 @@ type F1Event struct {
 
 type F1EventMsg F1Event
 
+type ConnectionMsg string
+
+type LoginMsg string
+
 type ArchiveStatus struct {
 	Status string `json:"Status"`
 }

@@ -69,10 +69,13 @@ func runLive(cmd *cobra.Command, args []string) error {
 
 	go client.Watch(cmd.Context(), func(state *f1.InitialLiveState) {
 		populateInitialState(program, state)
+	}, func(state string) {
+		program.Send(f1.ConnectionMsg(state))
 	})
 
 	// TODO: I am marshalling and unmarshalling data everywhere, I need to fix this later
 	go populateInitialState(program, initialState)
+	go program.Send(f1.LoginMsg(loginStatus()))
 	_, err = program.Run()
 
 	return err

@@ -61,6 +61,8 @@ func runReplay(cmd *cobra.Command, args []string) error {
 			return nil
 		})
 
+		go program.Send(f1.ConnectionMsg("replay"))
+		go program.Send(f1.LoginMsg(loginStatus()))
 		go client.Start(cmd.Context())
 
 		_, err = program.Run()

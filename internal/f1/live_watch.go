@@ -14,7 +14,7 @@ const (
 	staleThreshold    = 30 * time.Second
 )
 
-func (c *F1LiveClient) Watch(ctx context.Context, onResync func(*InitialLiveState)) {
+func (c *F1LiveClient) Watch(ctx context.Context, onResync func(*InitialLiveState), onState func(string)) {
 	states := make(chan signalr.ClientState, 16)
 	cancel := c.client.ObserveStateChanged(states)
 	defer cancel()
@@ -25,6 +25,8 @@ func (c *F1LiveClient) Watch(ctx context.Context, onResync func(*InitialLiveStat
 	reconcileTicker := time.NewTicker(reconcileInterval)
 	defer reconcileTicker.Stop()
 
+	onState(stateName(c.client.State()))
+
 	var lastCount int64
 	for {
 		select {
@@ -33,6 +35,7 @@ func (c *F1LiveClient) Watch(ctx context.Context, onResync func(*InitialLiveStat
 			return
 		case state := <-states:
 			c.log.Logf("client state=%s err=%v", stateName(state), c.client.Err())
+			onState(stateName(state))
 			c.resubscribe(ctx, onResync)
 		case <-reconcileTicker.C:
 			c.resubscribe(ctx, onResync)

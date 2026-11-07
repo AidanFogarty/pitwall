@@ -91,6 +91,15 @@ func loadLoginSession() (*auth.Session, error) {
 	return session, nil
 }
 
+func loginStatus() string {
+	session, err := loadLoginSession()
+	if err != nil {
+		return err.Error()
+	}
+
+	return "logged in, expires " + session.ExpiresAt.Format("2006-01-02 15:04")
+}
+
 func printLoggedIn(out io.Writer, session *auth.Session) {
 	fmt.Fprintln(out, "\n✓ Logged in to Formula 1")
 
